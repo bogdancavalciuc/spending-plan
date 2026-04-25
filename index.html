@@ -638,11 +638,74 @@
 
   function spct(id, v, ok, color) { const e=$(id); e.textContent=v+'%'; e.style.color=ok?color:'var(--red)'; }
 
+  // ── localStorage save/load ────────────────────────────────────────────────
+  function saveData() {
+    const data = {
+      net: $('net').value,
+      iRet: $('i-ret').value,
+      iStocks: $('i-stocks').value,
+      iOther: $('i-other').value,
+      sVac: $('s-vac').value,
+      sGifts: $('s-gifts').value,
+      sEmerg: $('s-emerg').value,
+      sOther: $('s-other').value,
+      fixedRows: [...document.querySelectorAll('#fixed-rows-container .fixed-row')].map(r => ({
+        label: r.querySelector('.fixed-row-label').value,
+        amount: r.querySelector('input[type=number]').value
+      })),
+      flatRows: [...document.querySelectorAll('#flat-extra-rows .fixed-row')].map(r => ({
+        label: r.querySelector('.fixed-row-label').value,
+        amount: r.querySelector('input[type=number]').value
+      }))
+    };
+    localStorage.setItem('csp_data', JSON.stringify(data));
+  }
+
+  function loadData() {
+    const raw = localStorage.getItem('csp_data');
+    if (!raw) return false;
+    try {
+      const d = JSON.parse(raw);
+      $('net').value     = d.net || '';
+      $('i-ret').value   = d.iRet || '';
+      $('i-stocks').value= d.iStocks || '';
+      $('i-other').value = d.iOther || '';
+      $('s-vac').value   = d.sVac || '';
+      $('s-gifts').value = d.sGifts || '';
+      $('s-emerg').value = d.sEmerg || '';
+      $('s-other').value = d.sOther || '';
+
+      (d.fixedRows || []).forEach(r => {
+        addFixedRow(r.label);
+        const rows = document.querySelectorAll('#fixed-rows-container .fixed-row');
+        rows[rows.length - 1].querySelector('input[type=number]').value = r.amount;
+      });
+      (d.flatRows || []).forEach(r => {
+        addFlatRow(r.label);
+        const rows = document.querySelectorAll('#flat-extra-rows .fixed-row');
+        rows[rows.length - 1].querySelector('input[type=number]').value = r.amount;
+      });
+      return true;
+    } catch(e) { return false; }
+  }
+
+  // patch calc to also save
+  const _calc = calc;
+  calc = function() { _calc(); saveData(); };
+
+  // also save on label edits
+  document.addEventListener('input', e => {
+    if (e.target.classList.contains('fixed-row-label')) saveData();
+  });
+
   // ── Init ──────────────────────────────────────────────────────────────────
-  ['Rent / Mortgage', 'Car payment / Transport', 'Debt payments', 'Groceries', 'Clothing', 'Phone'].forEach(l => addFixedRow(l));
-  ['Gas', 'Water', 'Electricity', 'Internet'].forEach(l => addFlatRow(l));
-  ['Health insurance', 'Auto insurance', 'Home / Renters insurance'].forEach(l => addFlatRow(l));
-  ['Netflix', 'Spotify', 'Gym'].forEach(l => addFlatRow(l));
+  const loaded = loadData();
+  if (!loaded) {
+    ['Rent / Mortgage', 'Car payment / Transport', 'Debt payments', 'Groceries', 'Clothing', 'Phone'].forEach(l => addFixedRow(l));
+    ['Gas', 'Water', 'Electricity', 'Internet'].forEach(l => addFlatRow(l));
+    ['Health insurance', 'Auto insurance', 'Home / Renters insurance'].forEach(l => addFlatRow(l));
+    ['Netflix', 'Spotify', 'Gym'].forEach(l => addFlatRow(l));
+  }
   calc();
 </script>
 </body>
