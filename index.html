@@ -3,367 +3,352 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Conscious Spending Plan</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<title>Flowt — Spending Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg:        #f5f5f7;
-    --surface:   #ffffff;
-    --surface2:  #f5f5f7;
-    --surface3:  #e8e8ed;
-    --border:    rgba(0,0,0,0.07);
-    --border2:   rgba(0,0,0,0.11);
-    --text:      #0a0a0a;
-    --muted:     #a0a0aa;
-    --muted2:    #6e6e7a;
-    --accent:    #7c5cfc;
-    --accent2:   #6444e8;
-    --blue:      #2563eb;
-    --blue-dim:  rgba(37,99,235,0.08);
-    --green:     #16a34a;
-    --green-dim: rgba(22,163,74,0.08);
-    --purple:    #9333ea;
-    --purple-dim:rgba(147,51,234,0.08);
-    --amber:     #d97706;
-    --amber-dim: rgba(217,119,6,0.08);
-    --red:       #dc2626;
-    --white:     #ffffff;
-  }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
-    font-family: 'Inter', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
-  }
+:root {
+  --bg:          #f2f3f7;
+  --bg2:         #eaecf2;
+  --surface:     #ffffff;
+  --surface2:    #f5f6fa;
+  --surface3:    #eceef4;
+  --border:      rgba(0,0,0,0.07);
+  --border2:     rgba(0,0,0,0.12);
+  --text:        #0e0f14;
+  --muted:       #b0b3c6;
+  --muted2:      #6e718a;
+  --blue:        #2563eb;
+  --blue-dim:    rgba(37,99,235,0.08);
+  --blue-glow:   rgba(37,99,235,0.15);
+  --green:       #059669;
+  --green-dim:   rgba(5,150,105,0.08);
+  --green-glow:  rgba(5,150,105,0.15);
+  --purple:      #7c3aed;
+  --purple-dim:  rgba(124,58,237,0.08);
+  --purple-glow: rgba(124,58,237,0.15);
+  --amber:       #b45309;
+  --amber-dim:   rgba(180,83,9,0.08);
+  --amber-glow:  rgba(180,83,9,0.15);
+  --red:         #dc2626;
+  --red-dim:     rgba(220,38,38,0.08);
+}
 
-  /* ── TOP BAR ── */
-  #summary-bar {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 16px 24px;
-    display: none;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    backdrop-filter: blur(12px);
-  }
-  .summary-grid { max-width: 680px; margin: 0 auto; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; }
-  .summary-item { text-align: center; padding: 4px 8px; border-right: 1px solid var(--border); }
-  .summary-item:last-child { border-right: none; }
-  .summary-pct { font-size: 20px; font-weight: 800; line-height: 1; letter-spacing: -0.03em; }
-  .summary-label { font-size: 10px; font-weight: 500; color: var(--muted2); margin-top: 3px; letter-spacing: 0.04em; text-transform: uppercase; }
-  .summary-ideal { display: none; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
 
-  /* ── LAYOUT ── */
-  main { max-width: 680px; margin: 0 auto; padding: 28px 20px 40px; }
+/* ── TOPBAR ── */
+#topbar {
+  background: rgba(242,243,247,0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 200;
+  padding: 0 24px;
+}
+.topbar-inner {
+  max-width: 720px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 54px;
+}
+.logo {
+  font-size: 16px; font-weight: 700; letter-spacing: -0.03em;
+  color: var(--text); display: flex; align-items: center; gap: 9px;
+}
+.logo-mark {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: linear-gradient(135deg, #3b6fd4, var(--blue));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; box-shadow: 0 0 14px rgba(91,156,246,0.35);
+}
+.btn-reset {
+  font-size: 11px; font-family: 'DM Sans', sans-serif; font-weight: 500;
+  color: var(--muted2); background: transparent;
+  border: 1px solid var(--border2); border-radius: 8px;
+  padding: 5px 12px; cursor: pointer; transition: all .2s; letter-spacing: 0.01em;
+}
+.btn-reset:hover { color: var(--red); border-color: rgba(248,113,113,0.35); background: var(--red-dim); }
 
-  /* ── CARDS GROUP ── */
-  .cards-group {
-    background: var(--surface);
-    border-radius: 20px;
-    border: 1px solid var(--border);
-    overflow: hidden;
-    margin-bottom: 12px;
-  }
+/* ── SUMMARY BAR ── */
+#summary-bar { display: none; background: var(--bg2); border-bottom: 1px solid var(--border); }
+.summary-grid { max-width: 720px; margin: 0 auto; display: grid; grid-template-columns: repeat(4,1fr); }
+.summary-item { padding: 12px 20px; border-right: 1px solid var(--border); }
+.summary-item:last-child { border-right: none; }
+.summary-pill { font-size: 10px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+.summary-pct { font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 500; line-height: 1; }
 
-  .card {
-    background: transparent;
-    border-radius: 0;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 0;
-    animation: fadeIn 0.35s ease both;
-  }
-  .card:last-child { border-bottom: none; }
+/* ── LAYOUT ── */
+main { max-width: 720px; margin: 0 auto; padding: 24px 20px 60px; display: flex; flex-direction: column; gap: 8px; }
 
-  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
-  .card:nth-child(1){animation-delay:.04s}.card:nth-child(2){animation-delay:.08s}.card:nth-child(3){animation-delay:.12s}.card:nth-child(4){animation-delay:.16s}.card:nth-child(5){animation-delay:.20s}
+/* ── SECTION ── */
+.section {
+  background: var(--surface);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  animation: fadeUp 0.4s ease both;
+}
+.section:nth-child(1){animation-delay:.04s}.section:nth-child(2){animation-delay:.09s}
+.section:nth-child(3){animation-delay:.14s}.section:nth-child(4){animation-delay:.19s}
+.section:nth-child(5){animation-delay:.24s}.section:nth-child(6){animation-delay:.29s}
 
-  /* ── CARD HEADER ── */
-  .card-header { padding: 16px 20px 12px; }
-  .card-header-top { display: flex; justify-content: space-between; align-items: flex-start; }
-  .card-title {
-    font-size: 15px;
-    font-weight: 800;
-    color: var(--text);
-    letter-spacing: -0.02em;
-  }
-  .card-subtitle {
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--muted);
-    margin-top: 2px;
-    letter-spacing: 0.02em;
-  }
-  .card-total { text-align: right; }
-  .card-total-amount {
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--text);
-    letter-spacing: -0.04em;
-    line-height: 1;
-  }
-  .card-total-pct {
-    font-size: 11px;
-    font-weight: 600;
-    margin-top: 3px;
-    color: var(--muted2);
-    letter-spacing: 0.01em;
-  }
+@keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 
-  /* ── PROGRESS BAR ── */
-  .progress-track {
-    margin-top: 10px;
-    background: var(--surface3);
-    border-radius: 99px;
-    height: 3px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    border-radius: 99px;
-    transition: width 0.5s cubic-bezier(.4,0,.2,1);
-  }
+/* ── SECTION HEADER ── */
+.sec-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px 14px;
+}
+.sec-header-left { display: flex; align-items: center; gap: 12px; }
+.sec-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; flex-shrink: 0;
+}
+.sec-title { font-size: 14px; font-weight: 600; letter-spacing: -0.01em; }
+.sec-sub { font-size: 11px; color: var(--muted2); margin-top: 1px; }
+.sec-right { text-align: right; }
+.sec-amount { font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 500; line-height: 1; letter-spacing: -0.02em; }
+.sec-pct { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted2); margin-top: 3px; }
 
-  /* per-section accent colors on progress + amounts + titles */
-  .hdr-income   .card-total-amount { color: var(--text); }
-  .hdr-fixed    .card-title { color: var(--blue); }
-  .hdr-fixed    .progress-fill { background: var(--blue); }
-  .hdr-fixed    .card-total-amount { color: var(--blue); }
-  .hdr-fixed    .card-total-pct { color: var(--blue); opacity: .7; }
-  .hdr-inv      .card-title { color: var(--green); }
-  .hdr-inv      .progress-fill { background: var(--green); }
-  .hdr-inv      .card-total-amount { color: var(--green); }
-  .hdr-inv      .card-total-pct { color: var(--green); opacity: .7; }
-  .hdr-sav      .card-title { color: var(--purple); }
-  .hdr-sav      .progress-fill { background: var(--purple); }
-  .hdr-sav      .card-total-amount { color: var(--purple); }
-  .hdr-sav      .card-total-pct { color: var(--purple); opacity: .7; }
-  .hdr-gf       .card-title { color: var(--amber); }
-  .hdr-gf       .progress-fill { background: var(--amber); }
-  .hdr-gf       .card-total-amount { color: var(--amber); }
-  .hdr-gf       .card-total-pct { color: var(--amber); opacity: .7; }
+/* color themes */
+.theme-fixed  .sec-icon { background: var(--blue-dim); }
+.theme-fixed  .sec-title { color: var(--blue); }
+.theme-fixed  .sec-amount { color: var(--blue); }
+.theme-fixed  .sec-pct { color: var(--blue); opacity:.65; }
+.theme-fixed  .progress-fill { background: linear-gradient(90deg, #3b6fd4, var(--blue));  }
+.theme-inv    .sec-icon { background: var(--green-dim); }
+.theme-inv    .sec-title { color: var(--green); }
+.theme-inv    .sec-amount { color: var(--green); }
+.theme-inv    .sec-pct { color: var(--green); opacity:.65; }
+.theme-inv    .progress-fill { background: linear-gradient(90deg, #1fa974, var(--green));  }
+.theme-sav    .sec-icon { background: var(--purple-dim); }
+.theme-sav    .sec-title { color: var(--purple); }
+.theme-sav    .sec-amount { color: var(--purple); }
+.theme-sav    .sec-pct { color: var(--purple); opacity:.65; }
+.theme-sav    .progress-fill { background: linear-gradient(90deg, #7c5cdd, var(--purple));  }
+.theme-gf     .sec-icon { background: var(--amber-dim); }
+.theme-gf     .sec-title { color: var(--amber); }
+.theme-gf     .sec-amount { color: var(--amber); }
+.theme-gf     .sec-pct { color: var(--amber); opacity:.65; }
+.theme-gf     .progress-fill { background: linear-gradient(90deg, #d4a017, var(--amber));  }
 
-  /* ── CARD BODY ── */
-  .card-body { padding: 14px 20px 18px; }
+/* ── PROGRESS ── */
+.progress-track { height: 2px; background: rgba(255,255,255,0.05); }
+.progress-fill { height: 100%; transition: width 0.6s cubic-bezier(.4,0,.2,1); }
 
-  /* ── ROWS ── */
-  .row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; gap: 10px; }
-  .row:last-child { margin-bottom: 0; }
-  .row label { font-size: 13px; font-weight: 400; color: var(--muted2); flex: 1; line-height: 1.4; }
+/* ── SECTION BODY ── */
+.sec-body { padding: 14px 20px 18px; }
+.sec-body-top { padding-top: 0; }
 
-  /* ── INPUT ── */
-  .input-wrap {
-    display: flex;
-    align-items: center;
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    border-radius: 10px;
-    padding: 6px 10px;
-    width: 100px;
-    gap: 4px;
-    transition: border-color .15s, box-shadow .15s;
-    flex-shrink: 0;
-  }
-  .input-wrap:focus-within {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(124,92,252,0.15);
-  }
-  .input-wrap.readonly { opacity: 0.5; pointer-events: none; }
-  .currency-sym { font-size: 12px; color: var(--muted); font-weight: 500; flex-shrink: 0; }
-  input[type=number] {
-    border: none; outline: none; background: transparent;
-    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
-    color: var(--text); width: 100%; text-align: right; letter-spacing: -0.02em;
-  }
-  input[type=number]::-webkit-inner-spin-button,
-  input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+/* ── INCOME INPUT ── */
+.income-field {
+  display: flex; align-items: center;
+  background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: 12px; overflow: hidden;
+  transition: border-color .2s, box-shadow .2s;
+}
+.income-field:focus-within {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px var(--blue-glow);
+}
+.income-sym {
+  font-family: 'DM Mono', monospace; font-size: 20px;
+  color: var(--muted); padding: 14px 4px 14px 18px; flex-shrink: 0;
+}
+#net {
+  border: none; outline: none; background: transparent;
+  font-family: 'DM Mono', monospace; font-size: 28px; font-weight: 500;
+  color: var(--text); width: 100%; padding: 12px 18px 12px 6px;
+  letter-spacing: -0.02em;
+}
+#net::placeholder { color: var(--muted); }
+#net::-webkit-inner-spin-button, #net::-webkit-outer-spin-button { -webkit-appearance: none; }
 
-  /* ── DRAG HANDLE ── */
-  .drag-handle {
-    width: 18px; height: 26px; flex-shrink: 0;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
-    cursor: grab; opacity: 0.2; transition: opacity .15s; padding: 2px;
-  }
-  .drag-handle:active { cursor: grabbing; }
-  .drag-handle span { display: block; width: 10px; height: 1.5px; background: var(--muted2); border-radius: 2px; }
-  .fixed-row:hover .drag-handle,
-  .subrow:hover .drag-handle { opacity: 0.5; }
+/* ── ROWS ── */
+.row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; gap: 10px; }
+.row:last-child { margin-bottom: 0; }
+.row label { font-size: 13px; font-weight: 400; color: var(--muted2); flex: 1; line-height: 1.4; }
 
-  /* ── FIXED ROW ── */
-  .fixed-row { display: flex; align-items: center; margin-bottom: 6px; gap: 6px; border-radius: 8px; transition: background .12s; padding: 2px 0; }
-  .fixed-row:last-child { margin-bottom: 0; }
-  .fixed-row.dragging { opacity: 0.3; }
-  .fixed-row.drag-over { border-top: 1.5px solid var(--accent); }
-  .fixed-row-label {
-    flex: 1; border: 1px solid transparent; border-radius: 8px;
-    padding: 5px 8px; font-size: 13px; font-family: 'Inter', sans-serif;
-    color: var(--muted2); background: transparent; outline: none;
-    transition: border-color .15s, background .15s; min-width: 0;
-  }
-  .fixed-row-label:hover { border-color: var(--border2); background: var(--surface2); }
-  .fixed-row-label:focus { border-color: var(--accent); background: var(--surface2); box-shadow: 0 0 0 2px rgba(124,92,252,0.12); color: var(--text); }
-  .fixed-row-label::placeholder { color: var(--muted); }
+/* ── INPUT ── */
+.input-wrap {
+  display: flex; align-items: center;
+  background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: 9px; padding: 7px 10px;
+  width: 106px; gap: 4px;
+  transition: border-color .15s, box-shadow .15s; flex-shrink: 0;
+}
+.input-wrap:focus-within { border-color: rgba(91,156,246,0.55); box-shadow: 0 0 0 3px var(--blue-glow); }
+.input-wrap.readonly { opacity: 0.35; pointer-events: none; }
+.currency-sym { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); flex-shrink: 0; }
+input[type=number] {
+  border: none; outline: none; background: transparent;
+  font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500;
+  color: var(--text); width: 100%; text-align: right; letter-spacing: -0.01em;
+}
+input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 
-  /* ── DELETE BTN ── */
-  .btn-delete {
-    width: 26px; height: 26px; border-radius: 8px;
-    border: 1px solid var(--border2); background: transparent;
-    color: var(--muted); font-size: 14px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; transition: background .12s, color .12s; line-height: 1;
-  }
-  .btn-delete:hover { background: rgba(239,68,68,0.1); color: var(--red); border-color: rgba(239,68,68,0.3); }
+/* ── FIXED ROW ── */
+.fixed-row { display: flex; align-items: center; margin-bottom: 4px; gap: 6px; border-radius: 8px; padding: 2px 0; }
+.fixed-row:last-child { margin-bottom: 0; }
+.fixed-row.dragging { opacity: 0.2; }
+.fixed-row.drag-over { border-top: 1.5px solid var(--blue); }
+.fixed-row-label {
+  flex: 1; border: 1px solid transparent; border-radius: 8px;
+  padding: 5px 8px; font-size: 13px; font-family: 'DM Sans', sans-serif;
+  color: var(--muted2); background: transparent; outline: none;
+  transition: border-color .15s, background .15s; min-width: 0;
+}
+.fixed-row-label:hover { border-color: var(--border2); background: var(--surface2); }
+.fixed-row-label:focus { border-color: rgba(91,156,246,0.5); background: var(--surface2); box-shadow: 0 0 0 2px var(--blue-glow); color: var(--text); }
+.fixed-row-label::placeholder { color: var(--muted); }
 
-  /* ── ADD BUTTONS ── */
-  .btn-add-row {
-    display: flex; align-items: center; gap: 8px;
-    padding: 8px 12px; border-radius: 10px;
-    border: 1px dashed var(--border2); background: transparent;
-    color: var(--muted); font-size: 12px; font-family: 'Inter', sans-serif;
-    font-weight: 500; cursor: pointer; margin-top: 10px; width: 100%;
-    transition: border-color .15s, color .15s, background .15s;
-  }
-  .btn-add-row:hover { border-color: var(--accent); color: var(--accent2); background: rgba(124,92,252,0.05); }
+/* ── DRAG ── */
+.drag-handle { width: 18px; height: 26px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: grab; opacity: 0.12; transition: opacity .15s; padding: 2px; }
+.drag-handle:active { cursor: grabbing; }
+.drag-handle span { display: block; width: 10px; height: 1.5px; background: var(--muted2); border-radius: 2px; }
+.fixed-row:hover .drag-handle { opacity: 0.4; }
 
-  /* ── MISC BOX ── */
-  .misc-box {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px; padding: 10px 14px; margin-top: 10px;
-  }
-  .misc-box .row { margin-bottom: 0; }
+/* ── DELETE ── */
+.btn-delete { width: 26px; height: 26px; border-radius: 7px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .15s; line-height: 1; }
+.btn-delete:hover { background: var(--red-dim); color: var(--red); border-color: rgba(248,113,113,0.3); }
 
-  /* ── ALERTS ── */
-  .alert { margin-top: 10px; padding: 10px 14px; border-radius: 10px; font-size: 12px; line-height: 1.5; font-weight: 500; }
-  .alert-warn { background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.2); }
-  .alert-info { background: var(--blue-dim); color: #93c5fd; border: 1px solid rgba(59,130,246,0.2); }
-  .alert-tip  { background: var(--green-dim); color: #86efac; border: 1px solid rgba(34,197,94,0.2); }
+/* ── DIVIDER ── */
+.divider-label { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 14px 0 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
 
-  /* ── GF DISPLAY ── */
-  .gf-display {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 14px 16px; background: var(--amber-dim);
-    border: 1px solid rgba(245,158,11,0.2);
-    border-radius: 12px; margin-top: 14px;
-  }
-  .gf-label { font-size: 13px; font-weight: 600; color: var(--muted2); }
-  .gf-amount { font-size: 22px; font-weight: 800; color: var(--amber); letter-spacing: -0.03em; }
+/* ── ADD BTN ── */
+.btn-add { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 9px; border: 1px dashed var(--border2); background: transparent; color: var(--muted); font-size: 12px; font-family: 'DM Sans', sans-serif; font-weight: 500; cursor: pointer; margin-top: 10px; width: 100%; transition: all .15s; }
+.btn-add:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-dim); }
 
-  /* ── MONTHLY SUMMARY ── */
-  #monthly-summary {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 20px 24px;
-    animation: fadeIn 0.35s 0.25s ease both;
-    display: none;
-    margin-bottom: 40px;
-  }
-  #monthly-summary .title {
-    font-size: 10px; font-weight: 700; color: var(--muted);
-    margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.1em;
-  }
-  .sum-row {
-    display: flex; justify-content: space-between;
-    font-size: 13px; padding-bottom: 10px;
-    border-bottom: 1px solid var(--border); margin-bottom: 10px;
-  }
-  .sum-row .lbl { color: var(--muted2); font-weight: 400; }
-  .sum-row .val { font-weight: 700; letter-spacing: -0.02em; }
-  .sum-final {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-top: 2px; padding-top: 12px; border-top: 1px solid var(--border2);
-  }
-  .sum-final .lbl { color: var(--text); font-weight: 600; font-size: 14px; }
-  .sum-final .val { font-size: 22px; font-weight: 800; letter-spacing: -0.04em; }
-  .sum-msg { text-align: center; font-size: 12px; margin-top: 12px; font-weight: 500; }
+/* ── MISC BOX ── */
+.misc-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; margin-top: 10px; }
+.misc-box .row { margin-bottom: 0; }
 
-  @media (max-width: 540px) {
-    .summary-grid { grid-template-columns: repeat(2,1fr); }
-    .card-header, .card-body { padding-left: 16px; padding-right: 16px; }
-    #monthly-summary { padding: 18px 16px; }
-  }
+/* ── ALERTS ── */
+.alert { margin-top: 10px; padding: 10px 14px; border-radius: 10px; font-size: 12px; line-height: 1.5; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+.alert-warn { background: var(--red-dim); color: var(--red); border: 1px solid rgba(248,113,113,0.18); }
+.alert-info { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(91,156,246,0.18); }
+.alert-tip  { background: var(--green-dim); color: var(--green); border: 1px solid rgba(62,207,142,0.18); }
+
+/* ── GF DISPLAY ── */
+.gf-display {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 18px; background: var(--amber-dim);
+  border: 1px solid rgba(246,195,67,0.14); border-radius: 12px; margin-top: 14px;
+}
+.gf-label { font-size: 12px; font-weight: 500; color: var(--muted2); }
+.gf-amount { font-family: 'DM Mono', monospace; font-size: 26px; font-weight: 500; color: var(--amber); letter-spacing: -0.02em; }
+
+/* ── SUMMARY CARD ── */
+#monthly-summary {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px 22px;
+  animation: fadeUp 0.4s 0.32s ease both; display: none;
+}
+.sum-title { font-size: 10px; font-weight: 600; color: var(--muted); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.1em; }
+.sum-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+.sum-row .lbl { color: var(--muted2); display: flex; align-items: center; gap: 9px; }
+.lbl-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.sum-row .val { font-family: 'DM Mono', monospace; font-weight: 500; letter-spacing: -0.01em; }
+.sum-final { display: flex; justify-content: space-between; align-items: center; padding-top: 14px; margin-top: 4px; }
+.sum-final .lbl { color: var(--text); font-weight: 600; font-size: 14px; }
+.sum-final .val { font-family: 'DM Mono', monospace; font-size: 26px; font-weight: 500; letter-spacing: -0.03em; }
+.sum-msg { text-align: center; font-size: 12px; margin-top: 14px; font-weight: 500; padding: 10px 16px; border-radius: 10px; }
+
+@media (max-width: 540px) {
+  .summary-grid { grid-template-columns: repeat(2,1fr); }
+  .sec-body, .sec-header { padding-left: 16px; padding-right: 16px; }
+  #monthly-summary { padding: 18px 16px; }
+}
 </style>
 </head>
 <body>
 
+<div id="topbar">
+  <div class="topbar-inner">
+    <div class="logo">
+      <div class="logo-mark">💰</div>
+      Flowt
+    </div>
+    <button class="btn-reset" onclick="resetDefaults()">↺ Reset</button>
+  </div>
+</div>
+
 <div id="summary-bar">
   <div class="summary-grid">
     <div class="summary-item">
+      <div class="summary-pill">Fixed</div>
       <div class="summary-pct" id="s-fixed" style="color:var(--blue)">0%</div>
-      <div class="summary-label">Fixed Costs</div><div class="summary-ideal">ideal 50–60%</div>
     </div>
     <div class="summary-item">
+      <div class="summary-pill">Invest</div>
       <div class="summary-pct" id="s-inv" style="color:var(--green)">0%</div>
-      <div class="summary-label">Investments</div><div class="summary-ideal">ideal 10%</div>
     </div>
     <div class="summary-item">
+      <div class="summary-pill">Savings</div>
       <div class="summary-pct" id="s-sav" style="color:var(--purple)">0%</div>
-      <div class="summary-label">Savings</div><div class="summary-ideal">ideal 5–10%</div>
     </div>
     <div class="summary-item">
+      <div class="summary-pill">Free</div>
       <div class="summary-pct" id="s-gf" style="color:var(--amber)">0%</div>
-      <div class="summary-label">Guilt-Free</div><div class="summary-ideal">ideal 20–35%</div>
     </div>
   </div>
 </div>
 
 <main>
 
-<div class="cards-group">
-
   <!-- INCOME -->
-  <div class="card">
-    <div class="card-header hdr-income">
-      <div class="card-header-top">
+  <div class="section">
+    <div class="sec-header" style="padding-bottom:10px;">
+      <div class="sec-header-left">
+        <div class="sec-icon" style="background:rgba(255,255,255,0.05);">💳</div>
         <div>
-          <div class="card-title">Income</div>
+          <div class="sec-title">Monthly Income</div>
+          <div class="sec-sub">Net take-home pay</div>
         </div>
       </div>
     </div>
-    <div class="card-body">
-      <div class="row">
-        <label>What you take home each month</label>
-        <div class="input-wrap">
-          <span class="currency-sym">€</span>
-          <input type="number" id="net" min="0" placeholder="0" oninput="calc()">
-        </div>
+    <div class="sec-body" style="padding-top:0;">
+      <div class="income-field">
+        <span class="income-sym">€</span>
+        <input type="number" id="net" min="0" placeholder="0" oninput="calc()">
       </div>
     </div>
   </div>
 
   <!-- FIXED COSTS -->
-  <div class="card">
-    <div class="card-header hdr-fixed">
-      <div class="card-header-top">
+  <div class="section theme-fixed">
+    <div class="sec-header">
+      <div class="sec-header-left">
+        <div class="sec-icon">🔒</div>
         <div>
-          <div class="card-title">Fixed Costs</div>
-          <div class="card-subtitle">Target: 50–60%</div>
-        </div>
-        <div class="card-total">
-          <div class="card-total-amount" id="fixed-total-display">€0</div>
-          <div class="card-total-pct" id="fixed-pct-display"></div>
+          <div class="sec-title">Fixed Costs</div>
+          <div class="sec-sub">Target: 50–60%</div>
         </div>
       </div>
-      <div class="progress-track"><div class="progress-fill" id="fixed-bar" style="width:0%"></div></div>
+      <div class="sec-right">
+        <div class="sec-amount" id="fixed-total-display">€0</div>
+        <div class="sec-pct" id="fixed-pct-display"></div>
+      </div>
     </div>
-    <div class="card-body">
-
+    <div class="progress-track"><div class="progress-fill" id="fixed-bar" style="width:0%"></div></div>
+    <div class="sec-body">
       <div id="fixed-rows-container"></div>
-
+      <div class="divider-label" id="extras-divider" style="display:none">Subscriptions & extras</div>
       <div id="flat-extra-rows"></div>
-
-      <button class="btn-add-row" onclick="addFixedRow()">
-        <span style="font-size:18px;line-height:1">+</span> Add fixed expense
+      <button class="btn-add" onclick="addFixedRow()">
+        <span style="font-size:16px;line-height:1">+</span> Add expense
       </button>
-
       <div class="misc-box" id="misc-box" style="display:none">
         <div class="row">
-          <label>Miscellaneous (+15% auto buffer)</label>
-          <div class="input-wrap readonly"><span class="currency-sym">€</span><input type="number" id="misc-val" readonly style="color:#888"></div>
+          <label style="color:var(--muted)">Miscellaneous buffer <span style="font-size:11px">(+15%)</span></label>
+          <div class="input-wrap readonly"><span class="currency-sym">€</span><input type="number" id="misc-val" readonly></div>
         </div>
       </div>
       <div id="fixed-warn" class="alert" style="display:none"></div>
@@ -371,44 +356,46 @@
   </div>
 
   <!-- INVESTMENTS -->
-  <div class="card">
-    <div class="card-header hdr-inv">
-      <div class="card-header-top">
+  <div class="section theme-inv">
+    <div class="sec-header">
+      <div class="sec-header-left">
+        <div class="sec-icon">📈</div>
         <div>
-          <div class="card-title">Investments</div>
-          <div class="card-subtitle">Target: 10%</div>
-        </div>
-        <div class="card-total">
-          <div class="card-total-amount" id="inv-total-display">€0</div>
-          <div class="card-total-pct" id="inv-pct-display"></div>
+          <div class="sec-title">Investments</div>
+          <div class="sec-sub">Target: 10%+</div>
         </div>
       </div>
-      <div class="progress-track"><div class="progress-fill" id="inv-bar" style="width:0%"></div></div>
+      <div class="sec-right">
+        <div class="sec-amount" id="inv-total-display">€0</div>
+        <div class="sec-pct" id="inv-pct-display"></div>
+      </div>
     </div>
-    <div class="card-body">
+    <div class="progress-track"><div class="progress-fill" id="inv-bar" style="width:0%"></div></div>
+    <div class="sec-body">
       <div class="row"><label>Retirement / Pension</label><div class="input-wrap"><span class="currency-sym">€</span><input type="number" id="i-ret" min="0" placeholder="0" oninput="calc()"></div></div>
-      <div class="row"><label>Stocks / Index funds / ETFs</label><div class="input-wrap"><span class="currency-sym">€</span><input type="number" id="i-stocks" min="0" placeholder="0" oninput="calc()"></div></div>
+      <div class="row"><label>Stocks / ETFs / Index funds</label><div class="input-wrap"><span class="currency-sym">€</span><input type="number" id="i-stocks" min="0" placeholder="0" oninput="calc()"></div></div>
       <div class="row"><label>Other</label><div class="input-wrap"><span class="currency-sym">€</span><input type="number" id="i-other" min="0" placeholder="0" oninput="calc()"></div></div>
       <div id="inv-tip" class="alert alert-tip" style="display:none"></div>
     </div>
   </div>
 
   <!-- SAVINGS -->
-  <div class="card">
-    <div class="card-header hdr-sav">
-      <div class="card-header-top">
+  <div class="section theme-sav">
+    <div class="sec-header">
+      <div class="sec-header-left">
+        <div class="sec-icon">🎯</div>
         <div>
-          <div class="card-title">Savings Goals</div>
-          <div class="card-subtitle">Target: 5–10%</div>
-        </div>
-        <div class="card-total">
-          <div class="card-total-amount" id="sav-total-display">€0</div>
-          <div class="card-total-pct" id="sav-pct-display"></div>
+          <div class="sec-title">Savings Goals</div>
+          <div class="sec-sub">Target: 5–10%</div>
         </div>
       </div>
-      <div class="progress-track"><div class="progress-fill" id="sav-bar" style="width:0%"></div></div>
+      <div class="sec-right">
+        <div class="sec-amount" id="sav-total-display">€0</div>
+        <div class="sec-pct" id="sav-pct-display"></div>
+      </div>
     </div>
-    <div class="card-body">
+    <div class="progress-track"><div class="progress-fill" id="sav-bar" style="width:0%"></div></div>
+    <div class="sec-body">
       <div class="row"><label>Vacations</label><div class="input-wrap"><span class="currency-sym">€</span><input type="number" id="s-vac" min="0" placeholder="0" oninput="calc()"></div></div>
       <div class="row"><label>Gifts</label><div class="input-wrap"><span class="currency-sym">€</span><input type="number" id="s-gifts" min="0" placeholder="0" oninput="calc()"></div></div>
       <div class="row"><label>Emergency fund</label><div class="input-wrap"><span class="currency-sym">€</span><input type="number" id="s-emerg" min="0" placeholder="0" oninput="calc()"></div></div>
@@ -417,120 +404,78 @@
   </div>
 
   <!-- GUILT-FREE -->
-  <div class="card">
-    <div class="card-header hdr-gf">
-      <div class="card-header-top">
+  <div class="section theme-gf">
+    <div class="sec-header">
+      <div class="sec-header-left">
+        <div class="sec-icon">✨</div>
         <div>
-          <div class="card-title">Guilt-Free Spending</div>
-          <div class="card-subtitle">Target: 20–35%</div>
-        </div>
-        <div class="card-total">
-          <div class="card-total-amount" id="gf-header-total">€0</div>
-          <div class="card-total-pct" id="gf-pct-display"></div>
+          <div class="sec-title">Guilt-Free Spending</div>
+          <div class="sec-sub">Target: 20–35%</div>
         </div>
       </div>
-      <div class="progress-track"><div class="progress-fill" id="gf-bar" style="width:0%"></div></div>
+      <div class="sec-right">
+        <div class="sec-amount" id="gf-header-total">€0</div>
+        <div class="sec-pct" id="gf-pct-display"></div>
+      </div>
     </div>
-    <div class="card-body">
-      <p style="font-size:14px;color:#666;line-height:1.7;">
-        Automatically calculated from what's left after fixed costs, investments, and savings. Spend it on restaurants, hobbies, clothing, nights out — whatever you love, with zero guilt.
+    <div class="progress-track"><div class="progress-fill" id="gf-bar" style="width:0%"></div></div>
+    <div class="sec-body">
+      <p style="font-size:13px;color:var(--muted2);line-height:1.75;">
+        Whatever's left after fixed costs, investments, and savings. Restaurants, hobbies, clothing, nights out — yours to spend without guilt.
       </p>
       <div class="gf-display">
-        <span class="gf-label">Available to spend</span>
+        <span class="gf-label">Available this month</span>
         <span class="gf-amount" id="gf-amount">€0</span>
       </div>
     </div>
   </div>
 
-</div><!-- end cards-group -->
-
-</main>
-
-<div style="max-width:720px;margin:0 auto;padding:0 24px 80px;">
   <!-- MONTHLY SUMMARY -->
   <div id="monthly-summary">
-    <div class="title">Monthly Summary</div>
-    <div class="sum-row"><span class="lbl">Take-home pay</span><span class="val" id="sum-net" style="color:var(--text)">+€0</span></div>
-    <div class="sum-row"><span class="lbl">Fixed costs</span><span class="val" id="sum-fixed" style="color:var(--blue)">-€0</span></div>
-    <div class="sum-row"><span class="lbl">Investments</span><span class="val" id="sum-inv" style="color:var(--green)">-€0</span></div>
-    <div class="sum-row"><span class="lbl">Savings</span><span class="val" id="sum-sav" style="color:var(--purple)">-€0</span></div>
-    <div class="sum-row"><span class="lbl">Guilt-free spending</span><span class="val" id="sum-gf" style="color:var(--amber)">-€0</span></div>
+    <div class="sum-title">Monthly Breakdown</div>
+    <div class="sum-row"><span class="lbl"><span class="lbl-dot" style="background:var(--text)"></span>Take-home pay</span><span class="val" id="sum-net" style="color:var(--text)">+€0</span></div>
+    <div class="sum-row"><span class="lbl"><span class="lbl-dot" style="background:var(--blue)"></span>Fixed costs</span><span class="val" id="sum-fixed" style="color:var(--blue)">-€0</span></div>
+    <div class="sum-row"><span class="lbl"><span class="lbl-dot" style="background:var(--green)"></span>Investments</span><span class="val" id="sum-inv" style="color:var(--green)">-€0</span></div>
+    <div class="sum-row"><span class="lbl"><span class="lbl-dot" style="background:var(--purple)"></span>Savings</span><span class="val" id="sum-sav" style="color:var(--purple)">-€0</span></div>
+    <div class="sum-row"><span class="lbl"><span class="lbl-dot" style="background:var(--amber)"></span>Guilt-free spending</span><span class="val" id="sum-gf" style="color:var(--amber)">-€0</span></div>
     <div class="sum-final">
       <span class="lbl">Unallocated</span>
       <span class="val" id="sum-remaining">€0</span>
     </div>
     <div class="sum-msg" id="sum-msg"></div>
   </div>
-</div>
+
+</main>
 
 <script>
   const $ = id => document.getElementById(id);
   const fmt = n => '€' + new Intl.NumberFormat('de-DE', { maximumFractionDigits: 0 }).format(n);
   const pct = (part, total) => total > 0 ? Math.round((part / total) * 100) : 0;
 
-
-  // ── Drag-and-drop ─────────────────────────────────────────────────────────
   let dragEl = null;
-
   function makeDraggable(el, container, onDrop) {
     el.setAttribute('draggable', true);
-
-    el.addEventListener('dragstart', e => {
-      dragEl = el;
-      setTimeout(() => el.classList.add('dragging'), 0);
-      e.dataTransfer.effectAllowed = 'move';
-    });
-
-    el.addEventListener('dragend', () => {
-      el.classList.remove('dragging');
-      container.querySelectorAll('.drag-over').forEach(r => r.classList.remove('drag-over'));
-      dragEl = null;
-      onDrop();
-    });
-
-    el.addEventListener('dragover', e => {
-      e.preventDefault();
-      if (dragEl && dragEl !== el && dragEl.parentElement === el.parentElement) {
-        container.querySelectorAll('.drag-over').forEach(r => r.classList.remove('drag-over'));
-        el.classList.add('drag-over');
-      }
-    });
-
-    el.addEventListener('drop', e => {
-      e.preventDefault();
-      if (dragEl && dragEl !== el && dragEl.parentElement === el.parentElement) {
-        const all = [...container.children];
-        const fromIdx = all.indexOf(dragEl);
-        const toIdx   = all.indexOf(el);
-        if (fromIdx < toIdx) el.after(dragEl);
-        else el.before(dragEl);
-        el.classList.remove('drag-over');
-      }
-    });
+    el.addEventListener('dragstart', e => { dragEl = el; setTimeout(() => el.classList.add('dragging'), 0); e.dataTransfer.effectAllowed = 'move'; });
+    el.addEventListener('dragend', () => { el.classList.remove('dragging'); container.querySelectorAll('.drag-over').forEach(r => r.classList.remove('drag-over')); dragEl = null; onDrop(); });
+    el.addEventListener('dragover', e => { e.preventDefault(); if (dragEl && dragEl !== el && dragEl.parentElement === el.parentElement) { container.querySelectorAll('.drag-over').forEach(r => r.classList.remove('drag-over')); el.classList.add('drag-over'); } });
+    el.addEventListener('drop', e => { e.preventDefault(); if (dragEl && dragEl !== el && dragEl.parentElement === el.parentElement) { const all = [...container.children]; const fi = all.indexOf(dragEl), ti = all.indexOf(el); if (fi < ti) el.after(dragEl); else el.before(dragEl); el.classList.remove('drag-over'); } });
   }
 
-  // ── Drag handle HTML ──────────────────────────────────────────────────────
-  function handleHTML() {
-    return `<div class="drag-handle" title="Drag to reorder"><span></span><span></span><span></span></div>`;
-  }
+  const handleHTML = () => `<div class="drag-handle"><span></span><span></span><span></span></div>`;
 
-  // ── Flat extra row (fost sub-categorie) ──────────────────────────────────
-  function addFlatRow(label = '') {
+  function addFlatRow(label = '', value = '') {
     const container = $('flat-extra-rows');
+    $('extras-divider').style.display = 'block';
     const div = document.createElement('div');
     div.className = 'fixed-row';
-    div.innerHTML = `
-      ${handleHTML()}
-      <input type="text" class="fixed-row-label" placeholder="Expense name..." value="${label.replace(/"/g,'&quot;')}">
-      <div class="input-wrap">
-        <span class="currency-sym">€</span>
-        <input type="number" min="0" placeholder="0" oninput="calc()">
-      </div>
-      <button class="btn-delete" onclick="this.closest('.fixed-row').remove(); calc()" title="Remove">×</button>
-    `;
+    div.innerHTML = `${handleHTML()}<input type="text" class="fixed-row-label" placeholder="Expense name..." value="${label.replace(/"/g,'&quot;')}"><div class="input-wrap"><span class="currency-sym">€</span><input type="number" min="0" placeholder="0" oninput="calc()" value="${value}"></div><button class="btn-delete" onclick="this.closest('.fixed-row').remove(); checkDivider(); calc()" title="Remove">×</button>`;
     container.appendChild(div);
     makeDraggable(div, container, calc);
     calc();
+  }
+
+  function checkDivider() {
+    $('extras-divider').style.display = $('flat-extra-rows').children.length ? 'block' : 'none';
   }
 
   function getFlatExtraTotal() {
@@ -539,20 +484,11 @@
     return t;
   }
 
-  // ── Plain fixed row ───────────────────────────────────────────────────────
-  function addFixedRow(label = '') {
+  function addFixedRow(label = '', value = '') {
     const container = $('fixed-rows-container');
     const div = document.createElement('div');
     div.className = 'fixed-row';
-    div.innerHTML = `
-      ${handleHTML()}
-      <input type="text" class="fixed-row-label" placeholder="Expense name..." value="${label.replace(/"/g,'&quot;')}">
-      <div class="input-wrap">
-        <span class="currency-sym">€</span>
-        <input type="number" min="0" placeholder="0" oninput="calc()">
-      </div>
-      <button class="btn-delete" onclick="this.closest('.fixed-row').remove(); calc()" title="Remove">×</button>
-    `;
+    div.innerHTML = `${handleHTML()}<input type="text" class="fixed-row-label" placeholder="Expense name..." value="${label.replace(/"/g,'&quot;')}"><div class="input-wrap"><span class="currency-sym">€</span><input type="number" min="0" placeholder="0" oninput="calc()" value="${value}"></div><button class="btn-delete" onclick="this.closest('.fixed-row').remove(); calc()" title="Remove">×</button>`;
     container.appendChild(div);
     makeDraggable(div, container, calc);
     calc();
@@ -564,15 +500,11 @@
     return t;
   }
 
-  // ── Main calc ─────────────────────────────────────────────────────────────
   function calc() {
     const net = Number($('net').value) || 0;
-
-    const plainT = getPlainTotal();
-    const extraT = getFlatExtraTotal();
-
-    const fBase      = plainT + extraT;
-    const misc       = fBase > 0 ? Math.round(fBase * 0.15) : 0;
+    const plainT = getPlainTotal(), extraT = getFlatExtraTotal();
+    const fBase = plainT + extraT;
+    const misc = fBase > 0 ? Math.round(fBase * 0.15) : 0;
     const fixedTotal = fBase + misc;
 
     $('misc-box').style.display = fBase > 0 ? 'block' : 'none';
@@ -581,7 +513,6 @@
     const invT = (Number($('i-ret').value)||0) + (Number($('i-stocks').value)||0) + (Number($('i-other').value)||0);
     const savT = (Number($('s-vac').value)||0) + (Number($('s-gifts').value)||0) + (Number($('s-emerg').value)||0) + (Number($('s-other').value)||0);
     const gfT  = Math.max(net - fixedTotal - invT - savT, 0);
-
     const fp = pct(fixedTotal, net), ip = pct(invT, net), sp = pct(savT, net), gp = pct(gfT, net);
 
     $('fixed-total-display').textContent = fmt(fixedTotal);
@@ -589,8 +520,8 @@
       $('fixed-pct-display').textContent = `${fp}%`;
       $('fixed-bar').style.width = Math.min(fp,100) + '%';
       const fw = $('fixed-warn');
-      if (fp > 60) { fw.className='alert alert-warn'; fw.textContent=`Fixed costs at ${fp}% — above the 60% threshold.`; fw.style.display='block'; }
-      else if (fBase > 0) { fw.className='alert alert-info'; fw.textContent=`Fixed costs at ${fp}% — looking good!`; fw.style.display='block'; }
+      if (fp > 60) { fw.className='alert alert-warn'; fw.innerHTML=`⚠ Fixed costs at ${fp}% — above the 60% threshold.`; fw.style.display='flex'; }
+      else if (fBase > 0) { fw.className='alert alert-info'; fw.innerHTML=`✓ Fixed costs at ${fp}% — looking good!`; fw.style.display='flex'; }
       else fw.style.display='none';
     } else { $('fixed-pct-display').textContent=''; $('fixed-bar').style.width='0%'; $('fixed-warn').style.display='none'; }
 
@@ -599,8 +530,8 @@
       $('inv-pct-display').textContent = `${ip}%`;
       $('inv-bar').style.width = Math.min(ip,100) + '%';
       const it = $('inv-tip');
-      it.textContent = ip < 10 ? `To hit 10%, aim for ${fmt(Math.round(net*.1))} / month.` : `Investments at ${ip}% — excellent!`;
-      it.style.display = 'block';
+      it.innerHTML = ip < 10 ? `↑ To hit 10%, aim for ${fmt(Math.round(net*.1))} / month.` : `🚀 Investments at ${ip}% — excellent!`;
+      it.style.display = 'flex';
     } else { $('inv-pct-display').textContent=''; $('inv-bar').style.width='0%'; $('inv-tip').style.display='none'; }
 
     $('sav-total-display').textContent = fmt(savT);
@@ -630,33 +561,21 @@
       $('sum-gf').textContent    = '-' + fmt(gfT);
       const re = $('sum-remaining'), me = $('sum-msg');
       re.textContent = fmt(rem);
-      if (rem === 0)    { re.style.color='var(--green)'; me.style.color='var(--green)'; me.textContent='✓ Perfect — every euro has a purpose!'; }
-      else if (rem > 0) { re.style.color='var(--amber)'; me.style.color='var(--amber)'; me.textContent='Move the surplus into investments or savings.'; }
-      else              { re.style.color='var(--red)'; me.style.color='var(--red)'; me.textContent="You're over budget — revisit your fixed costs."; }
+      if (rem === 0)    { re.style.color='var(--green)'; me.style.color='var(--green)'; me.style.background='var(--green-dim)'; me.textContent='✓ Perfect — every euro has a job.'; }
+      else if (rem > 0) { re.style.color='var(--amber)'; me.style.color='var(--amber)'; me.style.background='var(--amber-dim)'; me.textContent='Move the surplus into investments or savings.'; }
+      else              { re.style.color='var(--red)'; me.style.color='var(--red)'; me.style.background='var(--red-dim)'; me.textContent="Over budget — revisit your fixed costs."; }
     } else $('monthly-summary').style.display='none';
   }
 
   function spct(id, v, ok, color) { const e=$(id); e.textContent=v+'%'; e.style.color=ok?color:'var(--red)'; }
 
-  // ── localStorage save/load ────────────────────────────────────────────────
   function saveData() {
     const data = {
       net: $('net').value,
-      iRet: $('i-ret').value,
-      iStocks: $('i-stocks').value,
-      iOther: $('i-other').value,
-      sVac: $('s-vac').value,
-      sGifts: $('s-gifts').value,
-      sEmerg: $('s-emerg').value,
-      sOther: $('s-other').value,
-      fixedRows: [...document.querySelectorAll('#fixed-rows-container .fixed-row')].map(r => ({
-        label: r.querySelector('.fixed-row-label').value,
-        amount: r.querySelector('input[type=number]').value
-      })),
-      flatRows: [...document.querySelectorAll('#flat-extra-rows .fixed-row')].map(r => ({
-        label: r.querySelector('.fixed-row-label').value,
-        amount: r.querySelector('input[type=number]').value
-      }))
+      iRet: $('i-ret').value, iStocks: $('i-stocks').value, iOther: $('i-other').value,
+      sVac: $('s-vac').value, sGifts: $('s-gifts').value, sEmerg: $('s-emerg').value, sOther: $('s-other').value,
+      fixedRows: [...document.querySelectorAll('#fixed-rows-container .fixed-row')].map(r => ({ label: r.querySelector('.fixed-row-label').value, amount: r.querySelector('input[type=number]').value })),
+      flatRows:  [...document.querySelectorAll('#flat-extra-rows .fixed-row')].map(r => ({ label: r.querySelector('.fixed-row-label').value, amount: r.querySelector('input[type=number]').value }))
     };
     localStorage.setItem('csp_data', JSON.stringify(data));
   }
@@ -666,45 +585,34 @@
     if (!raw) return false;
     try {
       const d = JSON.parse(raw);
-      $('net').value     = d.net || '';
-      $('i-ret').value   = d.iRet || '';
-      $('i-stocks').value= d.iStocks || '';
-      $('i-other').value = d.iOther || '';
-      $('s-vac').value   = d.sVac || '';
-      $('s-gifts').value = d.sGifts || '';
-      $('s-emerg').value = d.sEmerg || '';
-      $('s-other').value = d.sOther || '';
-
-      (d.fixedRows || []).forEach(r => {
-        addFixedRow(r.label);
-        const rows = document.querySelectorAll('#fixed-rows-container .fixed-row');
-        rows[rows.length - 1].querySelector('input[type=number]').value = r.amount;
-      });
-      (d.flatRows || []).forEach(r => {
-        addFlatRow(r.label);
-        const rows = document.querySelectorAll('#flat-extra-rows .fixed-row');
-        rows[rows.length - 1].querySelector('input[type=number]').value = r.amount;
-      });
+      $('net').value=d.net||''; $('i-ret').value=d.iRet||''; $('i-stocks').value=d.iStocks||''; $('i-other').value=d.iOther||'';
+      $('s-vac').value=d.sVac||''; $('s-gifts').value=d.sGifts||''; $('s-emerg').value=d.sEmerg||''; $('s-other').value=d.sOther||'';
+      (d.fixedRows||[]).forEach(r => addFixedRow(r.label, r.amount));
+      (d.flatRows||[]).forEach(r => addFlatRow(r.label, r.amount));
       return true;
     } catch(e) { return false; }
   }
 
-  // patch calc to also save
   const _calc = calc;
   calc = function() { _calc(); saveData(); };
+  document.addEventListener('input', e => { if (e.target.classList.contains('fixed-row-label')) saveData(); });
 
-  // also save on label edits
-  document.addEventListener('input', e => {
-    if (e.target.classList.contains('fixed-row-label')) saveData();
-  });
+  function resetDefaults() {
+    if (!confirm('Reset everything to defaults? Your data will be lost.')) return;
+    localStorage.removeItem('csp_data');
+    localStorage.removeItem('csp_version');
+    location.reload();
+  }
 
-  // ── Init ──────────────────────────────────────────────────────────────────
+  const CURRENT_VERSION = '5';
+  if (localStorage.getItem('csp_version') !== CURRENT_VERSION) {
+    localStorage.removeItem('csp_data');
+    localStorage.setItem('csp_version', CURRENT_VERSION);
+  }
+
   const loaded = loadData();
   if (!loaded) {
-    ['Rent / Mortgage', 'Car payment / Transport', 'Debt payments', 'Groceries', 'Clothing', 'Phone'].forEach(l => addFixedRow(l));
-    ['Gas', 'Water', 'Electricity', 'Internet'].forEach(l => addFlatRow(l));
-    ['Health insurance', 'Auto insurance', 'Home / Renters insurance'].forEach(l => addFlatRow(l));
-    ['Netflix', 'Spotify', 'Gym'].forEach(l => addFlatRow(l));
+    ['Groceries', 'Rent', 'Debt Payments (Santander)', 'Car Insurance', 'Phone', 'Internet', 'Car Maintenance', 'Car Fuel', 'Electricity', 'Gym', 'IPTV', 'YouTube', 'Legal Insurance', 'ORF', 'OeAMTC', 'Sasha'].forEach(l => addFixedRow(l));
   }
   calc();
 </script>
