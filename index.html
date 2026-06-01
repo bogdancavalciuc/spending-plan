@@ -822,8 +822,14 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; }
     <button class="btn-add-group" onclick="addGroup()">⊞ Add group (e.g. Insurance)</button>
     <button class="btn-add" style="margin-top:6px" onclick="addFlatRow()">+ Add subscription</button>
     <div class="misc-box" id="misc-box" style="display:none">
-      <div class="row">
-        <label style="color:var(--text3);font-size:12px;">Buffer (+15%)</label>
+      <div class="row" style="align-items:center">
+        <label style="color:var(--text3);font-size:12px;display:flex;align-items:center;gap:8px;">
+          Buffer (+15%)
+          <button id="buffer-toggle" onclick="toggleBuffer()" style="display:inline-flex;align-items:center;gap:5px;border:1px solid var(--border2);border-radius:99px;padding:2px 9px 2px 6px;background:var(--surface2);font-size:10px;font-weight:600;font-family:'Inter',sans-serif;color:var(--text3);cursor:pointer;transition:all .18s" title="Enable/disable buffer">
+            <span id="buffer-dot" style="width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;transition:background .18s"></span>
+            <span id="buffer-lbl">ON</span>
+          </button>
+        </label>
         <div class="input-wrap readonly"><span class="csym">€</span><input type="number" id="misc-val" readonly></div>
       </div>
     </div>
@@ -960,6 +966,18 @@ const $=id=>document.getElementById(id);
 const fmtNum=n=>new Intl.NumberFormat('de-DE',{maximumFractionDigits:0}).format(n);
 const fmt=n=>'€'+fmtNum(n);
 const pct=(p,t)=>t>0?Math.round((p/t)*100):0;
+
+/* ── BUFFER TOGGLE ── */
+let bufferEnabled=true;
+function toggleBuffer(){
+  bufferEnabled=!bufferEnabled;
+  $('buffer-dot').style.background=bufferEnabled?'var(--green)':'var(--text3)';
+  $('buffer-lbl').textContent=bufferEnabled?'ON':'OFF';
+  $('buffer-toggle').style.color=bufferEnabled?'var(--green)':'var(--text3)';
+  $('buffer-toggle').style.borderColor=bufferEnabled?'var(--green)':'var(--border2)';
+  $('misc-val').closest('.input-wrap').style.opacity=bufferEnabled?'1':'0.35';
+  calc();
+}
 
 /* ── PERIOD (monthly / annual) ── */
 let period='monthly';
@@ -1191,11 +1209,11 @@ function calc(){
   const net=mNet*m;                  // display value
 
   const fBase=(getPlainTotal()+getFlatExtraTotal())*m;
-  const misc=fBase>0?Math.round(fBase*0.15):0;
+  const misc=fBase>0&&bufferEnabled?Math.round(fBase*0.15):0;
   const fixedTotal=fBase+misc;
 
   $('misc-box').style.display=fBase>0?'block':'none';
-  if(fBase>0)$('misc-val').value=Math.round((getPlainTotal()+getFlatExtraTotal())*0.15*(period==='annual'?1:1)); // keep monthly in field
+  if(fBase>0)$('misc-val').value=bufferEnabled?Math.round((getPlainTotal()+getFlatExtraTotal())*0.15):0;
 
   const invT=(getInvTotal())*m;
   const savT=getSavTotal()*m;
