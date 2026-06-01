@@ -850,9 +850,9 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; }
     <div class="progress-track"><div class="progress-fill" id="inv-bar" style="width:0%"></div></div>
   </div>
   <div class="bcard-body">
-    <div class="row"><label>Retirement / Pension</label><div class="input-wrap"><span class="csym">€</span><input type="number" id="i-ret" min="0" placeholder="0" oninput="calc()"></div></div>
     <div class="row"><label>Stocks / ETFs / Index funds</label><div class="input-wrap"><span class="csym">€</span><input type="number" id="i-stocks" min="0" placeholder="0" oninput="calc()"></div></div>
-    <div class="row"><label>Other</label><div class="input-wrap"><span class="csym">€</span><input type="number" id="i-other" min="0" placeholder="0" oninput="calc()"></div></div>
+    <div id="inv-extra-rows"></div>
+    <button class="btn-add" style="margin-top:8px;border-color:var(--green);color:var(--green)" onclick="addInvRow()" onmouseover="this.style.background='var(--green-lt)'" onmouseout="this.style.background='transparent'">+ Add investment</button>
     <div id="inv-tip" class="alert alert-tip" style="display:none"></div>
   </div>
 </div>
@@ -877,15 +877,9 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; }
   </div>
   <div class="bcard-body">
     <div class="row"><label>Vacations</label><div class="input-wrap"><span class="csym">€</span><input type="number" id="s-vac" min="0" placeholder="0" oninput="calc()"></div></div>
-    <div class="row"><label>Gifts</label><div class="input-wrap"><span class="csym">€</span><input type="number" id="s-gifts" min="0" placeholder="0" oninput="calc()"></div></div>
     <div class="row"><label>Emergency fund</label><div class="input-wrap"><span class="csym">€</span><input type="number" id="s-emerg" min="0" placeholder="0" oninput="calc()"></div></div>
-    <div class="row"><label>Other</label><div class="input-wrap"><span class="csym">€</span><input type="number" id="s-other" min="0" placeholder="0" oninput="calc()"></div></div>
-    <!-- SAVINGS GOALS -->
-    <div class="goals-section">
-      <div class="goals-title">Savings Goals</div>
-      <div id="goals-container"></div>
-      <button class="btn-add-goal" onclick="addGoal()">+ Add goal</button>
-    </div>
+    <div id="sav-extra-rows"></div>
+    <button class="btn-add" style="margin-top:8px;border-color:var(--violet);color:var(--violet)" onclick="addSavRow()" onmouseover="this.style.background='var(--violet-lt)'" onmouseout="this.style.background='transparent'">+ Add savings goal</button>
   </div>
 </div>
 
@@ -1164,46 +1158,30 @@ function updateGroupTotal(gid){
   const lbl=$('gtotal-'+gid); if(lbl) lbl.textContent=fmt(t);
 }
 
-/* ── SAVINGS GOALS ── */
-let goalIdCounter=0;
-function addGoal(name='',saved=0,target=0){
-  const id='goal-'+(++goalIdCounter);
-  const c=$('goals-container');
-  const d=document.createElement('div'); d.className='goal-row'; d.dataset.id=id;
-  d.innerHTML=`
-    <div class="goal-row-top">
-      <input type="text" class="goal-name-input" placeholder="Goal name (e.g. Vacation)..." value="${name.replace(/"/g,'&quot;')}">
-      <div class="goal-amounts">
-        <span>Saved</span>
-        <input type="number" min="0" placeholder="0" value="${saved}" oninput="updateGoals();saveData()">
-        <span>/ Target</span>
-        <input type="number" min="0" placeholder="0" value="${target}" oninput="updateGoals();saveData()">
-      </div>
-      <button class="goal-del" onclick="this.closest('.goal-row').remove();updateGoals();saveData()" title="Remove">×</button>
-    </div>
-    <div class="goal-progress-track"><div class="goal-progress-fill" id="${id}-fill" style="width:0%"></div></div>
-    <div class="goal-pct-lbl" id="${id}-lbl">€0 of €0 — 0%</div>`;
-  c.appendChild(d);
-  updateGoals(); saveData();
+/* ── INVESTMENTS ── */
+function getInvTotal(){
+  let t=Number($('i-stocks').value)||0;
+  document.querySelectorAll('#inv-extra-rows .fixed-row input[type=number]').forEach(i=>t+=Number(i.value)||0);
+  return t;
 }
-function updateGoals(){
-  document.querySelectorAll('.goal-row').forEach(row=>{
-    const id=row.dataset.id;
-    const inputs=row.querySelectorAll('input[type=number]');
-    const saved=Number(inputs[0].value)||0;
-    const target=Number(inputs[1].value)||0;
-    const fill=document.getElementById(id+'-fill');
-    const lbl=document.getElementById(id+'-lbl');
-    if(!fill||!lbl)return;
-    const p=target>0?Math.min(Math.round((saved/target)*100),100):0;
-    const done=p>=100;
-    fill.style.width=p+'%';
-    fill.className='goal-progress-fill'+(done?' goal-done':'');
-    lbl.className='goal-pct-lbl'+(done?' goal-done':'');
-    lbl.textContent=done
-      ? `🎉 Goal reached! (${fmt(saved)})`
-      : `${fmt(saved)} of ${fmt(target)} — ${p}%`;
-  });
+function addInvRow(label='',value=''){
+  const c=$('inv-extra-rows');
+  const d=document.createElement('div'); d.className='fixed-row';
+  d.innerHTML=`${handleHTML()}<input type="text" class="fixed-row-label" placeholder="Investment name..." value="${label.replace(/"/g,'&quot;')}"><div class="input-wrap"><span class="csym">€</span><input type="number" min="0" placeholder="0" oninput="calc()" value="${value}"></div><button class="btn-delete" onclick="this.closest('.fixed-row').remove();calc()" title="Remove">×</button>`;
+  c.appendChild(d); makeDraggable(d,c,calc); calc();
+}
+
+/* ── SAVINGS ── */
+function getSavTotal(){
+  let t=(Number($('s-vac').value)||0)+(Number($('s-emerg').value)||0);
+  document.querySelectorAll('#sav-extra-rows .fixed-row input[type=number]').forEach(i=>t+=Number(i.value)||0);
+  return t;
+}
+function addSavRow(label='',value=''){
+  const c=$('sav-extra-rows');
+  const d=document.createElement('div'); d.className='fixed-row';
+  d.innerHTML=`${handleHTML()}<input type="text" class="fixed-row-label" placeholder="Savings name..." value="${label.replace(/"/g,'&quot;')}"><div class="input-wrap"><span class="csym">€</span><input type="number" min="0" placeholder="0" oninput="calc()" value="${value}"></div><button class="btn-delete" onclick="this.closest('.fixed-row').remove();calc()" title="Remove">×</button>`;
+  c.appendChild(d); makeDraggable(d,c,calc); calc();
 }
 
 /* ── MAIN CALC ── */
@@ -1219,8 +1197,8 @@ function calc(){
   $('misc-box').style.display=fBase>0?'block':'none';
   if(fBase>0)$('misc-val').value=Math.round((getPlainTotal()+getFlatExtraTotal())*0.15*(period==='annual'?1:1)); // keep monthly in field
 
-  const invT=((Number($('i-ret').value)||0)+(Number($('i-stocks').value)||0)+(Number($('i-other').value)||0))*m;
-  const savT=((Number($('s-vac').value)||0)+(Number($('s-gifts').value)||0)+(Number($('s-emerg').value)||0)+(Number($('s-other').value)||0))*m;
+  const invT=(getInvTotal())*m;
+  const savT=getSavTotal()*m;
   const gfT=Math.max(net-fixedTotal-invT-savT,0);
   const fp=pct(fixedTotal,net),ip=pct(invT,net),sp=pct(savT,net),gp=pct(gfT,net);
   const overBudget=net>0&&fixedTotal>net*0.60;
@@ -1314,8 +1292,6 @@ function calc(){
   else{$('gf-pct-display').textContent='';$('gf-bar').style.width='0%';}
 
   updateChart(net,fixedTotal,invT,savT,gfT);
-  updateGoals();
-
   /* History card visibility */
   $('history-card').classList.toggle('visible', net>0||getHistory().length>0);
 
@@ -1350,8 +1326,8 @@ function saveSnapshot(){
   const fBase=(getPlainTotal()+getFlatExtraTotal())*m;
   const misc=fBase>0?Math.round(fBase*0.15):0;
   const fixedTotal=fBase+misc;
-  const invT=((Number($('i-ret').value)||0)+(Number($('i-stocks').value)||0)+(Number($('i-other').value)||0))*m;
-  const savT=((Number($('s-vac').value)||0)+(Number($('s-gifts').value)||0)+(Number($('s-emerg').value)||0)+(Number($('s-other').value)||0))*m;
+  const invT=getInvTotal()*m;
+  const savT=getSavTotal()*m;
   const net=mNet*m;
   const gfT=Math.max(net-fixedTotal-invT-savT,0);
   const snap={label,net,fixed:fixedTotal,inv:invT,sav:savT,gf:gfT,ts:Date.now()};
@@ -1391,13 +1367,7 @@ function deleteSnapshot(i){
   const h=getHistory(); h.splice(i,1); saveHistory(h); renderHistory();
 }
 
-/* ── PERSIST ── */
 function saveData(){
-  const goals=[...document.querySelectorAll('.goal-row')].map(r=>{
-    const inputs=r.querySelectorAll('input[type=number]');
-    return{name:r.querySelector('.goal-name-input').value,saved:inputs[0].value,target:inputs[1].value};
-  });
-  // collect groups
   const groups=[...document.querySelectorAll('#fixed-rows-container .group-block')].map(block=>{
     const gid=block.dataset.gid;
     const rowsEl=$('grows-'+gid);
@@ -1405,19 +1375,16 @@ function saveData(){
       label:r.querySelector('.fixed-row-label').value,
       amount:r.querySelector('input[type=number]').value
     })):[];
-    return{
-      name:block.querySelector('.group-name-input').value,
-      open:block.classList.contains('open'),
-      subRows
-    };
+    return{name:block.querySelector('.group-name-input').value,open:block.classList.contains('open'),subRows};
   });
   const data={
-    net:$('net').value,iRet:$('i-ret').value,iStocks:$('i-stocks').value,iOther:$('i-other').value,
-    sVac:$('s-vac').value,sGifts:$('s-gifts').value,sEmerg:$('s-emerg').value,sOther:$('s-other').value,
+    net:$('net').value,iStocks:$('i-stocks').value,
+    sVac:$('s-vac').value,sEmerg:$('s-emerg').value,
     fixedRows:[...document.querySelectorAll('#fixed-rows-container > .fixed-row')].map(r=>({label:r.querySelector('.fixed-row-label').value,amount:r.querySelector('input[type=number]').value})),
     flatRows:[...document.querySelectorAll('#flat-extra-rows .fixed-row')].map(r=>({label:r.querySelector('.fixed-row-label').value,amount:r.querySelector('input[type=number]').value})),
-    groups,
-    goals
+    invRows:[...document.querySelectorAll('#inv-extra-rows .fixed-row')].map(r=>({label:r.querySelector('.fixed-row-label').value,amount:r.querySelector('input[type=number]').value})),
+    savRows:[...document.querySelectorAll('#sav-extra-rows .fixed-row')].map(r=>({label:r.querySelector('.fixed-row-label').value,amount:r.querySelector('input[type=number]').value})),
+    groups
   };
   localStorage.setItem('csp_data',JSON.stringify(data));
 }
@@ -1426,20 +1393,21 @@ function loadData(){
   if(!raw)return false;
   try{
     const d=JSON.parse(raw);
-    $('net').value=d.net||'';$('i-ret').value=d.iRet||'';$('i-stocks').value=d.iStocks||'';$('i-other').value=d.iOther||'';
-    $('s-vac').value=d.sVac||'';$('s-gifts').value=d.sGifts||'';$('s-emerg').value=d.sEmerg||'';$('s-other').value=d.sOther||'';
+    $('net').value=d.net||'';$('i-stocks').value=d.iStocks||'';
+    $('s-vac').value=d.sVac||'';$('s-emerg').value=d.sEmerg||'';
     (d.fixedRows||[]).forEach(r=>addFixedRow(r.label,r.amount));
     (d.groups||[]).forEach(g=>addGroup(g.name,g.open!==false,g.subRows||[]));
     (d.flatRows||[]).forEach(r=>addFlatRow(r.label,r.amount));
-    (d.goals||[]).forEach(g=>addGoal(g.name,g.saved,g.target));
+    (d.invRows||[]).forEach(r=>addInvRow(r.label,r.amount));
+    (d.savRows||[]).forEach(r=>addSavRow(r.label,r.amount));
     return true;
   }catch(e){return false;}
 }
 document.addEventListener('input',e=>{
-  if(e.target.classList.contains('fixed-row-label')||e.target.classList.contains('goal-name-input')||e.target.classList.contains('group-name-input'))saveData();
+  if(e.target.classList.contains('fixed-row-label')||e.target.classList.contains('group-name-input'))saveData();
 });
 
-const VER='14';
+const VER='17';
 if(localStorage.getItem('csp_version')!==VER){localStorage.removeItem('csp_data');localStorage.setItem('csp_version',VER);}
 if(!loadData()){
   ['Groceries','Rent','Phone','Internet','Car Maintenance','Car Fuel','Electricity','Gym','IPTV','YouTube','ORF','OeAMTC','Sasha'].forEach(l=>addFixedRow(l));
@@ -1453,8 +1421,6 @@ if(!loadData()){
     {label:'Home Insurance',amount:''},
     {label:'Legal Insurance',amount:''},
   ]);
-  addGoal('Vacation',0,2000);
-  addGoal('Emergency fund',0,5000);
 }
 renderHistory();
 calc();
